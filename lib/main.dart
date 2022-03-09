@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingapp/providers/products_providers.dart';
+import 'package:shoppingapp/providers/products.dart';
 import 'package:shoppingapp/screens/product_details.dart';
 import 'package:shoppingapp/screens/product_overview.dart';
 
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => ProductsProviders(),
+      create: (context) => Products(),
       child: MaterialApp(
         title: 'Shopping App',
         debugShowCheckedModeBanner: false,
