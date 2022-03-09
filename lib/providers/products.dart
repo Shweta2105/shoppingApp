@@ -37,8 +37,23 @@ class Products with ChangeNotifier {
     ),
   ];
 
+  var _showFavouritesOnly = false;
+
   List<Product> get items {
+    if (_showFavouritesOnly) {
+      return _items.where((prodItem) => prodItem.isFavourite).toList();
+    }
     return [..._items]; //make copy of _items list as items
+  }
+
+  void showFavouriteOnly() {
+    _showFavouritesOnly = true;
+    notifyListeners();
+  }
+
+  void showAll() {
+    _showFavouritesOnly = false;
+    notifyListeners();
   }
 
   // we make copyof _items bcoz thw following methods which we r going to use
