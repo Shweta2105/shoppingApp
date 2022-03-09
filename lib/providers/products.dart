@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoppingapp/providers/product.dart';
+import 'package:shoppingapp/widgets/product_item.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [
@@ -37,23 +38,12 @@ class Products with ChangeNotifier {
     ),
   ];
 
-  var _showFavouritesOnly = false;
-
   List<Product> get items {
-    if (_showFavouritesOnly) {
-      return _items.where((prodItem) => prodItem.isFavourite).toList();
-    }
     return [..._items]; //make copy of _items list as items
   }
 
-  void showFavouriteOnly() {
-    _showFavouritesOnly = true;
-    notifyListeners();
-  }
-
-  void showAll() {
-    _showFavouritesOnly = false;
-    notifyListeners();
+  List<Product> get favouriteItem {
+    return _items.where((prodItem) => prodItem.isFavourite).toList();
   }
 
   // we make copyof _items bcoz thw following methods which we r going to use
