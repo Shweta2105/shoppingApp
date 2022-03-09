@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:shoppingapp/providers/cart.dart';
 import 'package:shoppingapp/screens/cartscreen.dart';
+import 'package:shoppingapp/widgets/app_drawer.dart';
 import 'package:shoppingapp/widgets/badge.dart';
-import 'package:shoppingapp/screens/cartscreen.dart';
 import 'package:shoppingapp/widgets/productgrid.dart';
-import 'package:provider/provider.dart';
 
 enum Filteroptions { Favourites, All }
 
@@ -61,6 +62,7 @@ class _ProductOverViewState extends State<ProductOverView> {
             ),
           ],
         ),
+        drawer: AppDrawer(),
         body: ProductGrid(
           showFavourtes: _showFavourites,
         ));
