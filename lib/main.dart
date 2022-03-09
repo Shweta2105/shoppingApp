@@ -5,7 +5,7 @@ import 'package:shoppingapp/providers/orders.dart';
 import 'package:shoppingapp/providers/products.dart';
 import 'package:shoppingapp/screens/product_details.dart';
 import 'package:shoppingapp/screens/product_overview.dart';
-import 'package:shoppingapp/widgets/cartscreen.dart';
+import 'package:shoppingapp/screens/cartscreen.dart';
 
 void main() {
   runApp(MyApp());
