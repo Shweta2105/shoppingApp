@@ -27,8 +27,12 @@ class ProductItem extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           leading: IconButton(
-            icon: Icon(Icons.favorite, color: Theme.of(context).accentColor),
-            onPressed: () {},
+            icon: Icon(
+                product.isFavourite ? Icons.favorite : Icons.favorite_border,
+                color: Theme.of(context).accentColor),
+            onPressed: () {
+              product.toggleIsFavourite();
+            },
           ),
           trailing: IconButton(
             icon: Icon(
