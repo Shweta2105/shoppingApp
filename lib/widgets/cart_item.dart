@@ -20,6 +20,27 @@ class CartItem extends StatelessWidget {
       onDismissed: (direction) {
         Provider.of<Cart>(context, listen: false).removeItem(productId);
       },
+      confirmDismiss: (direction) {
+        return showDialog(
+            context: context,
+            builder: (c) => AlertDialog(
+                  backgroundColor: Color.fromARGB(255, 196, 202, 223),
+                  title: Text('Are you sure?'),
+                  content: Text('Do you want to delete the item from cart..?'),
+                  actions: [
+                    FlatButton(
+                        onPressed: () {
+                          Navigator.of(c).pop(false);
+                        },
+                        child: Text('No')),
+                    FlatButton(
+                        onPressed: () {
+                          Navigator.of(c).pop(true);
+                        },
+                        child: Text('Delete')),
+                  ],
+                ));
+      },
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
