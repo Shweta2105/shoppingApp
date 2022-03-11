@@ -36,10 +36,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context)!.settings.arguments as String;
+      final productId = ModalRoute.of(context)?.settings.arguments;
       if (productId != null) {
+        var prodId = productId as String;
         _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
+            Provider.of<Products>(context, listen: false).findById(prodId);
         _initValues = {
           'title': _editedProduct.title,
           'description': _editedProduct.description,
@@ -72,19 +73,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void _saveForm() {
     final isValid = _form.currentState!.validate();
     if (!isValid) {
+      print('============Inside if validate');
       return;
     }
     _form.currentState!.save();
     if (_editedProduct.id != '') {
-      Provider.of<Products>(
-        context,
-      ).updateProduct(_editedProduct.id, _editedProduct);
-      Navigator.of(context).pop;
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
     } else {
       Provider.of<Products>(context, listen: false).addProducts(_editedProduct);
     }
     print(_editedProduct.imageUrl);
-    Navigator.of(context).pop;
+    Navigator.of(context).pop();
   }
 
   @override
