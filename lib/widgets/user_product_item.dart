@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:shoppingapp/screens/edit_product_screen.dart';
 
 class UserProductItem extends StatelessWidget {
+  final String id;
   final String title;
   final String imageUrl;
 
-  UserProductItem(this.title, this.imageUrl);
+  const UserProductItem(
+    this.id,
+    this.title,
+    this.imageUrl,
+  );
 
   @override
   Widget build(BuildContext context) {
+    print(title);
+    print('--------------image-------');
+    print(imageUrl);
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -19,7 +28,10 @@ class UserProductItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamed(EditProductScreen.routeName, arguments: id);
+                },
                 icon: Icon(
                   Icons.edit,
                   color: Theme.of(context).primaryColor,

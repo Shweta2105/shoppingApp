@@ -19,10 +19,36 @@ class _EditProductScreenState extends State<EditProductScreen> {
   var _editedProduct =
       Product(id: '', title: '', description: '', price: 0, imageUrl: '');
 
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
+  var _isInit = true;
+
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context)!.settings.arguments as String;
+      _editedProduct =
+          Provider.of<Products>(context, listen: false).findById(productId);
+      _initValues = {
+        'title': _editedProduct.title,
+        'description': _editedProduct.description,
+        'price': _editedProduct.price.toString(),
+        'imageUrl': '',
+      };
+      _imageUrlController.text = _editedProduct.imageUrl;
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   @override
@@ -47,7 +73,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _form.currentState!.save();
-    Provider.of<Products>(context, listen: false).addProducts(_editedProduct);
+    if (_editedProduct.id != '') {
+      Provider.of<Products>(
+        context,
+      ).updateProduct(_editedProduct.id, _editedProduct);
+      Navigator.of(context).pop;
+    } else {
+      Provider.of<Products>(context, listen: false).addProducts(_editedProduct);
+    }
+    print(_editedProduct.imageUrl);
     Navigator.of(context).pop;
   }
 
@@ -71,6 +105,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             child: ListView(
               children: <Widget>[
                 TextFormField(
+                  initialValue: _initValues['title'],
                   decoration: InputDecoration(labelText: 'Title'),
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (_) {
@@ -84,14 +119,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   onSaved: (value) {
                     _editedProduct = Product(
-                        id: '',
                         title: value!,
                         description: _editedProduct.description,
                         price: _editedProduct.price,
-                        imageUrl: _editedProduct.imageUrl);
+                        imageUrl: _editedProduct.imageUrl,
+                        id: _editedProduct.id,
+                        isFavourite: _editedProduct.isFavourite);
                   },
                 ),
                 TextFormField(
+                  initialValue: _initValues['price'],
                   decoration: InputDecoration(labelText: 'Price'),
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
@@ -113,14 +150,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   onSaved: (value) {
                     _editedProduct = Product(
-                        id: '',
                         title: _editedProduct.title,
                         description: _editedProduct.description,
                         price: double.parse(value!),
-                        imageUrl: _editedProduct.imageUrl);
+                        imageUrl: _editedProduct.imageUrl,
+                        id: _editedProduct.id,
+                        isFavourite: _editedProduct.isFavourite);
                   },
                 ),
                 TextFormField(
+                  initialValue: _initValues['description'],
                   decoration: InputDecoration(labelText: 'Description'),
                   maxLines: 3,
                   keyboardType: TextInputType.multiline,
@@ -136,11 +175,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   onSaved: (value) {
                     _editedProduct = Product(
-                        id: '',
                         title: _editedProduct.title,
                         description: value!,
                         price: _editedProduct.price,
-                        imageUrl: _editedProduct.imageUrl);
+                        imageUrl: _editedProduct.imageUrl,
+                        id: _editedProduct.id,
+                        isFavourite: _editedProduct.isFavourite);
                   },
                 ),
                 Row(
@@ -177,22 +217,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           }
                           if (!value.startsWith('http') &&
                               !value.startsWith('https')) {
-                            return 'Please entera valid URL';
+                            return 'Please enter a valid URL';
                           }
-                          // if (!value.endsWith('.png') &&
-                          //     !value.endsWith('.jpg') &&
-                          //     !value.endsWith('.jpeg')) {
-                          //   return 'Please enter valid image URL';
-                          // }
+                          if (!value.endsWith('.png') &&
+                              !value.endsWith('.jpg') &&
+                              !value.endsWith('.jpeg')) {
+                            return 'Please enter valid image URL';
+                          }
                           return null;
                         },
                         onSaved: (value) {
                           _editedProduct = Product(
-                              id: '',
                               title: _editedProduct.title,
                               description: _editedProduct.description,
                               price: _editedProduct.price,
-                              imageUrl: value!);
+                              imageUrl: value!,
+                              id: _editedProduct.id,
+                              isFavourite: _editedProduct.isFavourite);
                         },
                       ),
                     )
