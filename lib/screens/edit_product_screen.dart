@@ -78,8 +78,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _form.currentState!.save();
-    isLoading = true;
-    print(isLoading);
+    setState(() {
+      isLoading = true;
+    });
     if (_editedProduct.id != '') {
       Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
@@ -90,11 +91,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
     } else {
       Provider.of<Products>(context, listen: false)
           .addProducts(_editedProduct)
-          .then((_) {
+          .catchError((error) {
+        return showDialog<Null>(
+            context: context,
+            builder: (c) => AlertDialog(
+                  title: Text("An error occured.!"),
+                  content: Text("Something went wrong..!"),
+                  actions: <Widget>[
+                    FlatButton(
+                        onPressed: () {
+                          Navigator.of(c).pop();
+                        },
+                        child: Text('OK'))
+                  ],
+                ));
+      }).then((_) {
         setState(() {
           isLoading = false;
         });
-        print(isLoading);
         Navigator.of(context).pop();
       });
     }
