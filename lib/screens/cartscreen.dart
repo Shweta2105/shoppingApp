@@ -30,18 +30,10 @@ class CartScreen extends StatelessWidget {
                         TextStyle(fontSize: 20, fontFamily: 'SansitaSwashed'),
                   ),
                   Spacer(),
-                  Chip(label: Text('\$${myCart.totalAmount}')),
-                  FlatButton(
-                    onPressed: () {
-                      Provider.of<Orders>(context, listen: false).addOrders(
-                          myCart.items.values.toList(), myCart.totalAmount);
-                      myCart.clear();
-                    },
-                    child: Text(
-                      'ORDER NOW',
-                      style: TextStyle(color: Theme.of(context).primaryColor),
-                    ),
-                  )
+                  Chip(
+                      label:
+                          Text('\$${myCart.totalAmount.toStringAsFixed(2)}')),
+                  OrderButton(myCart: myCart)
                 ],
               ),
             ),
@@ -60,6 +52,47 @@ class CartScreen extends StatelessWidget {
                       myCart.items.values.toList()[index].title)))
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key? key,
+    required this.myCart,
+  }) : super(key: key);
+
+  final Cart myCart;
+
+  @override
+  State<OrderButton> createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: widget.myCart.totalAmount <= 0 || isLoading
+          ? null
+          : () async {
+              setState(() {
+                isLoading = true;
+              });
+              await Provider.of<Orders>(context, listen: false).addOrders(
+                  widget.myCart.items.values.toList(),
+                  widget.myCart.totalAmount);
+              setState(() {
+                isLoading = false;
+              });
+              widget.myCart.clear();
+            },
+      child: isLoading
+          ? CircularProgressIndicator()
+          : Text(
+              'ORDER NOW',
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            ),
     );
   }
 }

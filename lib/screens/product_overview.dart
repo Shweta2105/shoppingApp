@@ -90,7 +90,7 @@ class _ProductOverViewState extends State<ProductOverView> {
         ),
         drawer: AppDrawer(),
         body: isLoading
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(),
               )
             : ProductGrid(
