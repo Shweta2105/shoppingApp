@@ -26,10 +26,12 @@ class _ProductOverViewState extends State<ProductOverView> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print('---------------in initState');
   }
 
   @override
   void didChangeDependencies() {
+    print('---------------in didChangeDependencies');
     if (_isInit) {
       setState(() {
         isLoading = true;
@@ -46,6 +48,7 @@ class _ProductOverViewState extends State<ProductOverView> {
 
   @override
   Widget build(BuildContext context) {
+    print('---------------in build');
     return Scaffold(
         appBar: AppBar(
           title: Text('Shopping stop'),
