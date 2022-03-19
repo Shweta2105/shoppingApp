@@ -95,7 +95,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProducts(Product product) async {
     var url =
-        'https://shopping-app-01-default-rtdb.asia-southeast1.firebasedatabase.app/shoppingproducts.json';
+        'https://shopping-app-01-default-rtdb.asia-southeast1.firebasedatabase.app/shoppingproducts.json?auth=$authToken';
     try {
       final response = await http.post(
         (Uri.parse(url)),
@@ -128,7 +128,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url =
-          'https://shopping-app-01-default-rtdb.asia-southeast1.firebasedatabase.app/shoppingproducts/$id.json';
+          'https://shopping-app-01-default-rtdb.asia-southeast1.firebasedatabase.app/shoppingproducts/$id.json?auth=$authToken';
       await http.patch(Uri.parse(url),
           body: json.encode({
             'title': newProduct.title,
@@ -145,7 +145,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url =
-        'https://shopping-app-01-default-rtdb.asia-southeast1.firebasedatabase.app/shoppingproducts/$id.json';
+        'https://shopping-app-01-default-rtdb.asia-southeast1.firebasedatabase.app/shoppingproducts/$id.json?auth=$authToken';
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     Product? existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
