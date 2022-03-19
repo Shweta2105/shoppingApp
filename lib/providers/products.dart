@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Products with ChangeNotifier {
+  final String authToken;
+  Products(this.authToken, this._items);
+
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -56,23 +59,32 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchProducts() async {
-    var url =
-        'https://shopping-app-01-default-rtdb.asia-southeast1.firebasedatabase.app/shoppingproducts.json';
+    final url =
+        'https://shopping-app-01-default-rtdb.asia-southeast1.firebasedatabase.app/shoppingproducts.json?auth=$authToken';
     try {
       final response = await http.get(Uri.parse(url));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      print('----------------------');
       if (extractedData == null) {
         return;
       }
+      print("------------fetch method");
+      print(authToken);
+      print(response.statusCode);
+      print(response.body);
+      print('----------------------');
+      print(extractedData);
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
-        loadedProducts.add(Product(
-            id: prodId,
-            title: prodData['title'],
-            description: prodData['description'],
-            price: prodData['price'],
-            isFavourite: prodData['isFavourite'],
-            imageUrl: prodData['imageUrl']));
+        loadedProducts.add(
+          Product(
+              id: prodId,
+              title: prodData['title'],
+              description: prodData['description'],
+              price: prodData['price'],
+              isFavourite: prodData['isFavourite'],
+              imageUrl: prodData['imageUrl']),
+        );
       });
       _items = loadedProducts;
       notifyListeners();

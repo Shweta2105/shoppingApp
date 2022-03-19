@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
+import 'package:shoppingapp/models/http_exception.dart';
 
 import '../providers/auth.dart';
 
@@ -87,6 +88,23 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
+  void _showErrorDialog(String message) {
+    showDialog(
+        context: context,
+        builder: (c) => AlertDialog(
+              backgroundColor: Color.fromARGB(255, 196, 202, 223),
+              title: Text('Error occured'),
+              content: Text(message),
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(c).pop();
+                    },
+                    child: Text('OK')),
+              ],
+            ));
+  }
+
   Future<void> _submit() async {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) {
@@ -96,15 +114,29 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.Login) {
-      //login
-      await Provider.of<Auth>(context, listen: false)
-          .login(_authData['email'], _authData['password']);
-    } else {
-      //signup
-      await Provider.of<Auth>(context, listen: false)
-          .signup(_authData['email'], _authData['password']);
+    try {
+      if (_authMode == AuthMode.Login) {
+        //login
+        await Provider.of<Auth>(context, listen: false)
+            .login(_authData['email'], _authData['password']);
+      } else {
+        //signup
+        await Provider.of<Auth>(context, listen: false)
+            .signup(_authData['email'], _authData['password']);
+      }
+    } on HttpException catch (error) {
+      var errorMessage = 'Authenticatio failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address  is already  in use';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could not find user with this email id';
+      }
+      _showErrorDialog(errorMessage);
+    } catch (error) {
+      var errorMessage = 'Could not authenticate. Please try again later';
+      _showErrorDialog(errorMessage);
     }
+
     setState(() {
       _isLoading = false;
     });

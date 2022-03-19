@@ -21,36 +21,45 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: Auth(),
-        ),
-        ChangeNotifierProvider.value(
-          value: Products(),
-        ),
-        ChangeNotifierProvider.value(
-          value: Cart(),
-        ),
-        ChangeNotifierProvider.value(
-          value: Orders(),
-        )
-      ],
-      child: MaterialApp(
-        title: 'Shopping App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            primarySwatch: Colors.indigo,
-            accentColor: Colors.orangeAccent,
-            fontFamily: 'SansitaSwashed'),
-        home: AuthScreen(),
-        routes: {
-          ProductDetails.routeName: (context) => ProductDetails(),
-          CartScreen.routeName: (context) => CartScreen(),
-          OrderScreen.routeName: (context) => OrderScreen(),
-          UserProductScreen.routeName: (context) => UserProductScreen(),
-          EditProductScreen.routeName: (context) => EditProductScreen(),
-        },
-      ),
-    );
+        providers: [
+          ChangeNotifierProvider.value(
+            value: Auth(),
+          ),
+          ChangeNotifierProxyProvider<Auth, Products>(
+            create: (_) => Products('', []),
+            update: (ctx, auth, previousProducts) {
+              print('-**************at main************');
+              print(auth.token);
+              print('*****************************');
+              return Products(auth.token ?? "",
+                  previousProducts == null ? [] : previousProducts.items);
+            },
+          ),
+          ChangeNotifierProvider.value(
+            value: Cart(),
+          ),
+          ChangeNotifierProvider.value(
+            value: Orders(),
+          )
+        ],
+        child: Consumer<Auth>(
+          builder: (ctx, auth, _) => MaterialApp(
+            title: 'Shopping App',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+                primarySwatch: Colors.indigo,
+                accentColor: Colors.orangeAccent,
+                fontFamily: 'SansitaSwashed'),
+            home: // AuthScreen(),
+                auth.isAuth ? ProductOverView() : AuthScreen(),
+            routes: {
+              ProductDetails.routeName: (ctx) => ProductDetails(),
+              CartScreen.routeName: (ctx) => CartScreen(),
+              OrderScreen.routeName: (ctx) => OrderScreen(),
+              UserProductScreen.routeName: (ctx) => UserProductScreen(),
+              EditProductScreen.routeName: (ctx) => EditProductScreen(),
+            },
+          ),
+        ));
   }
 }
